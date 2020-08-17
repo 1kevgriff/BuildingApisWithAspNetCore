@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Demo5_1
+namespace Demo4_2
 {
     public class Startup
     {
@@ -16,7 +16,9 @@ namespace Demo5_1
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddXmlSerializerFormatters();
+            services.AddControllers();
+            
+            services.AddTransient<IProductRepository, FakeProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

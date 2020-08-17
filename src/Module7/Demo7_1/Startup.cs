@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Demo5_1
+namespace Demo7_1
 {
     public class Startup
     {
@@ -16,7 +18,13 @@ namespace Demo5_1
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddXmlSerializerFormatters();
+            services.AddControllers();
+            services.AddApiVersioning(setup => {
+                setup.DefaultApiVersion = new ApiVersion(1, 0); 
+                // setup.ApiVersionReader = new QueryStringApiVersionReader("version", "ver", "v");
+                // setup.ApiVersionReader = new HeaderApiVersionReader("x-version");
+                setup.ApiVersionReader = new UrlSegmentApiVersionReader();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
