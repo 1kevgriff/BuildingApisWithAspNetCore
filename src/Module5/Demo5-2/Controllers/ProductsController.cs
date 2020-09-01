@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
+// [ApiController]
 [Route("api/products")]
 public class ProductsController : ControllerBase
 {
@@ -12,7 +12,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("")]
-    public IActionResult GetProducts([FromHeader(Name= "X-HeaderTest")] string headerTest)
+    public IActionResult GetProducts()
     {
         var products = _productRepository.GetProducts();
 
@@ -30,11 +30,15 @@ public class ProductsController : ControllerBase
 
     // POST /api/products
     [HttpPost("")]
-    public IActionResult CreateNewProduct(Product newProduct)
+    public IActionResult CreateNewProduct([FromBody]Product newProduct)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         // create product...
         var createdProduct = _productRepository.CreateProduct(newProduct);
 
-        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+        return CreatedAtAction(nameof(GetProductById),
+            new { id = createdProduct.Id },
+            createdProduct);
     }
 }

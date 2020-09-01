@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/products")]
+[FormatFilter]
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
@@ -12,14 +13,16 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("")]
-    public IActionResult GetProducts([FromHeader(Name= "X-HeaderTest")] string headerTest)
+    public IActionResult GetProducts()
     {
         var products = _productRepository.GetProducts();
 
         return Ok(products);
     }
 
-    [HttpGet("{id}")]
+    // api/products/1.json
+    // api/products/1.xml
+    [HttpGet("{id}.{format?}")]
     public IActionResult GetProductById(long id)
     {
         var product = _productRepository.GetProduct(id);
@@ -30,11 +33,15 @@ public class ProductsController : ControllerBase
 
     // POST /api/products
     [HttpPost("")]
-    public IActionResult CreateNewProduct(Product newProduct)
+    public IActionResult CreateNewProduct([FromBody]Product newProduct)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         // create product...
         var createdProduct = _productRepository.CreateProduct(newProduct);
 
-        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+        return CreatedAtAction(nameof(GetProductById),
+            new { id = createdProduct.Id },
+            createdProduct);
     }
 }
