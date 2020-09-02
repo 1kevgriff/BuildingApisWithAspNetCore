@@ -19,12 +19,19 @@ namespace Demo7_1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddApiVersioning(setup => {
-                setup.DefaultApiVersion = new ApiVersion(1, 0); 
-                // setup.ApiVersionReader = new QueryStringApiVersionReader("version", "ver", "v");
-                // setup.ApiVersionReader = new HeaderApiVersionReader("x-version");
-                setup.ApiVersionReader = new UrlSegmentApiVersionReader();
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 1);
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader("version", "ver", "v"),
+                    new HeaderApiVersionReader("x-version")
+                );
             });
+
+            services.AddTransient<IProductRepository, FakeProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

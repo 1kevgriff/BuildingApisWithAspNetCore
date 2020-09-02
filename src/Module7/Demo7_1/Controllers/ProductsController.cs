@@ -1,36 +1,49 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[ApiVersion("1.0")]
-[Route("api/{version:apiVersion}/products")]
-public class ProductsV1Controller : ControllerBase
-{
-    [HttpGet]
-    public IActionResult GetProducts()
-    {
-        var products = new List<Productv1>() {
-            new Productv1() {Id = 0, Name = "Log", Description = "It's Big.  It's Heavy.  It's Wood.", Price = 9.99m},
-            new Productv1() {Id = 1, Name = "Twig", Description = "It's a smaller log.", Price = 5.99m}
-        };
 
-        return Ok(products);
+// api/1.1/products
+[ApiController]
+[Route("/api/products")]
+[Route("/api/{version:apiVersion}/products")]
+public class ProductsController : ControllerBase
+{
+    private readonly IProductRepository _productRepository;
+
+    public ProductsController(IProductRepository productRepository)
+    {
+        this._productRepository = productRepository;
     }
-}
 
-[ApiController]
-[ApiVersion("2.0")]
-[Route("api/{version:apiVersion}/products")]
-public class ProductsV2Controller : ControllerBase
-{
-    [HttpGet]
-    public IActionResult GetProducts()
+    [HttpGet("")]
+    [ApiVersion("1.0")]
+    public List<Product> GetProducts()
     {
-        var products = new List<Productv2>() {
-            new Productv2() {Id = 0, Name = "Log", Description = "It's Big.  It's Heavy.  It's Wood.", Price = 9.99m, QuantityInStock = 50},
-            new Productv2() {Id = 1, Name = "Twig", Description = "It's a smaller log.", Price = 5.99m, QuantityInStock = 233}
-        };
+        var products = _productRepository.GetProducts();
 
-        return Ok(products);
+        return products; // 200 OK
+    }
+
+    [HttpGet("")]
+    [ApiVersion("1.1")]
+    public List<Product> GetProducts([FromQuery] string filter)
+    {
+        var products = _productRepository.GetProducts();
+
+        return products; // 200 OK
+    }
+
+    [HttpGet("{id}")]
+    public ActionResult<Product> GetProductById(long id)
+    {
+        var product = _productRepository.GetProduct(id);
+
+        if (product == null) return NotFound();
+
+        return product;
     }
 }
