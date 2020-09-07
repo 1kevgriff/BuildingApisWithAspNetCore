@@ -23,20 +23,6 @@ namespace Demo8_1
 
             services.AddSwaggerGen(c =>
             {
-                // c.SwaggerDoc("v1", new OpenApiInfo
-                // {
-                //     Version = "v1",
-                //     Title = "Product API",
-                //     Description = "A simple API for products",
-                //     TermsOfService = new Uri("https://consultwithgriff.com"),
-                //     Contact = new OpenApiContact
-                //     {
-                //         Name = "Kevin Griffin",
-                //         Email = "kevin@consultwithgriff.com",
-                //         Url = new Uri("https://consultwithgriff.com"),
-                //     }
-                // });
-
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -53,14 +39,14 @@ namespace Demo8_1
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product API");
-            });
 
             app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product API");
+                });
 
             app.UseEndpoints(endpoints =>
             {
