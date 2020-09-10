@@ -4,11 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 [Route("states")]
 public class StatesController : ControllerBase
 {
-    private readonly IStatesRepository statesRepository;
-
-    public StatesController(IStatesRepository statesRepository)
+    public StatesController()
     {
-        this.statesRepository = statesRepository;
     }
 
     // GET /states
